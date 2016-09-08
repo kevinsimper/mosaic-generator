@@ -9,19 +9,30 @@ document.addEventListener('change', (e) => {
     console.log(gridWidth, gridHeight)
     for(let y = 0; y < gridHeight; y++) {
       let div = document.createElement('div')
+      div.style.display = 'none'
+      let rowLoading = []
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
         let block = generateBlock(data)
+        rowLoading.push(new Promise((resolve, reject) => {
+          block.onload = () => {
+            resolve()
+          }
+        }))
         div.appendChild(block)
       }
       document.body.appendChild(div)
+      Promise.all(rowLoading).then(() => {
+        console.log('done')
+        div.style.display = ''
+      })
     }
   })
 })
 
 function getImageDetails (file, callback) {
   let image = document.createElement('img')
-  image.onload = function (){
+  image.onload = function () {
     return callback.bind(this, image)
   }();
   let reader = new FileReader()
