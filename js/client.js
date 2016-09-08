@@ -24,13 +24,25 @@ function generateMosaic(context, gridWidth, gridHeight) {
       div.appendChild(block)
     }
     document.body.appendChild(div)
-    rowsLoading.push(Promise.all(images).then(rowLoaded.bind(div, y)))
+    rowsLoading.push(Promise.all(images).then(function () {
+      return [div, y]
+    }))
   }
+  // run the promise one at a time left to right
+  rowsLoading.reduce((previous, currentValue) => {
+    // wait for the previous to finish
+    return previous.then(() => {
+      // then wait for the current one
+      return currentValue.then((result) => {
+        rowLoaded(result[0], result[1])
+      })
+    })
+  }, Promise.resolve())
 }
 
-function rowLoaded (y) {
+function rowLoaded (div, y) {
   console.log(y)
-  this.style.display = ''
+  div.style.display = ''
 }
 
 function imageLoadedPromise (image) {
