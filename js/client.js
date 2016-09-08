@@ -9,6 +9,7 @@ document.addEventListener('change', (e) => {
     canvas.height = height
     canvas.width = width
     context.drawImage(image, 0, 0)
+    let gridSize = calculateGrid(width, height)
     let data = context.getImageData(0, 0, 16, 16).data
     let rgbArray = calculateAverageColor(data)
     const hex = convertToHex(...rgbArray)
@@ -28,11 +29,13 @@ function convertToHex (r, g, a) {
   const _a = ('0' + a.toString(16)).slice(-2)
   return _r + _g + _a
 }
+
 function createColorBlock (hex) {
   let block = document.createElement('img')
   block.src = '/color/' + hex
   return block
 }
+
 function calculateAverageColor(data) {
   let r = 0
   let b = 0
@@ -49,4 +52,8 @@ function calculateAverageColor(data) {
   g = Math.floor(g / pixels)
   b = Math.floor(b / pixels)
   return [r, g, b]
+}
+
+function calculateGrid(imageWidth, imageHeight) {
+  return [imageWidth / TILE_WIDTH, imageHeight / TILE_HEIGHT]
 }
