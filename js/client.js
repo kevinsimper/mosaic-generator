@@ -1,8 +1,8 @@
-document.addEventListener('change', (e) => {
+document.querySelector('#file').addEventListener('change', (e) => {
   let file = e.target.files[0]
   getImageDetails(file, (image) => {
     let { width, height } = image
-    document.body.appendChild(image)
+    document.querySelector('#image').appendChild(image)
     let context = createCanvasContext(width, height)
     context.drawImage(image, 0, 0)
     let { gridWidth, gridHeight} = calculateGrid(width, height)
@@ -15,6 +15,7 @@ function generateMosaic(context, gridWidth, gridHeight) {
   let rowsLoading = []
   for(let y = 0; y < gridHeight; y++) {
     let div = document.createElement('div')
+    div.className = 'row'
     div.style.display = 'none'
     let images = []
     for(let x = 0; x < gridWidth; x++) {
@@ -23,7 +24,7 @@ function generateMosaic(context, gridWidth, gridHeight) {
       images.push(imageLoadedPromise(block))
       div.appendChild(block)
     }
-    document.body.appendChild(div)
+    document.querySelector('#mosaic').appendChild(div)
     rowsLoading.push(Promise.all(images).then(function () {
       return [div, y]
     }))
