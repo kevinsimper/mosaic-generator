@@ -10,22 +10,8 @@ document.addEventListener('change', (e) => {
     canvas.width = width
     context.drawImage(image, 0, 0)
     let data = context.getImageData(0, 0, 16, 16).data
-    let r = 0
-    let b = 0
-    let g = 0
-    console.log(data)
-    for(let i = 0; i < data.length; i += 4) {
-      r += data[i]
-      b += data[i + 1]
-      g += data[i + 2]
-    }
-    let pixels = data.length / 4
-    console.log(r, g, b, pixels)
-    r = Math.floor(r / pixels)
-    g = Math.floor(g / pixels)
-    b = Math.floor(b / pixels)
-    console.log(r, g, b)
-    const hex = convertToHex(r,g,b)
+    let rgbArray = calculateAverageColor(data)
+    const hex = convertToHex(...rgbArray)
     let block = createColorBlock(hex)
     document.body.appendChild(block)
   }
@@ -46,4 +32,21 @@ function createColorBlock (hex) {
   let block = document.createElement('img')
   block.src = '/color/' + hex
   return block
+}
+function calculateAverageColor(data) {
+  let r = 0
+  let b = 0
+  let g = 0
+  console.log(data)
+  for(let i = 0; i < data.length; i += 4) {
+    r += data[i]
+    b += data[i + 1]
+    g += data[i + 2]
+  }
+  let pixels = data.length / 4
+  console.log(r, g, b, pixels)
+  r = Math.floor(r / pixels)
+  g = Math.floor(g / pixels)
+  b = Math.floor(b / pixels)
+  return [r, g, b]
 }
