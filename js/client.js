@@ -1,13 +1,10 @@
 document.addEventListener('change', (e) => {
   let file = e.target.files[0]
-  let canvas = document.createElement('canvas')
-  let context = canvas.getContext('2d')
   let image = document.createElement('img')
   image.onload = () => {
     let { width, height } = image
     document.body.appendChild(image)
-    canvas.height = height
-    canvas.width = width
+    let context = createCanvasContext(width, height)
     context.drawImage(image, 0, 0)
     let { gridWidth, gridHeight} = calculateGrid(width, height)
     console.log(gridWidth, gridHeight)
@@ -15,7 +12,7 @@ document.addEventListener('change', (e) => {
       let div = document.createElement('div')
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
-        let block = generateRow(data)
+        let block = generateBlock(data)
         div.appendChild(block)
       }
       document.body.appendChild(div)
@@ -27,6 +24,13 @@ document.addEventListener('change', (e) => {
   }
   reader.readAsDataURL(file)
 })
+
+function createCanvasContext (width, height) {
+  let canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  return canvas.getContext('2d')
+}
 
 function convertToHex (r, g, b) {
   const _r = ('0' + r.toString(16)).slice(-2)
@@ -46,7 +50,6 @@ function calculateAverageColor (data) {
   let b = 0
   let g = 0
   for(let i = 0; i < data.length; i += 4) {
-    // console.log(data[i] * data[i])
     r = r + (data[i] * data[i])
     g = g + (data[i + 1] * data[i + 1])
     b = b + (data[i + 2] * data[i + 2])
@@ -65,7 +68,7 @@ function calculateGrid (imageWidth, imageHeight) {
   }
 }
 
-function generateRow (data) {
+function generateBlock (data) {
   let rgbArray = calculateAverageColor(data)
   const hex = convertToHex(...rgbArray)
   return createColorBlock(hex)
