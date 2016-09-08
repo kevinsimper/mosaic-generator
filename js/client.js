@@ -9,12 +9,14 @@ document.addEventListener('change', (e) => {
     canvas.height = height
     canvas.width = width
     context.drawImage(image, 0, 0)
-    let gridSize = calculateGrid(width, height)
-    let data = context.getImageData(0, 0, 16, 16).data
-    let rgbArray = calculateAverageColor(data)
-    const hex = convertToHex(...rgbArray)
-    let block = createColorBlock(hex)
-    document.body.appendChild(block)
+    let { gridWidth, gridHeight} = calculateGrid(width, height)
+    console.log(gridWidth, gridHeight)
+    for(let y = 0; y < gridHeight; y++) {
+      for(let x = 0; x < gridWidth; x++) {
+        let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
+        generateRow(data)
+      }
+    }
   }
   let reader = new FileReader()
   reader.onload = () => {
@@ -36,7 +38,7 @@ function createColorBlock (hex) {
   return block
 }
 
-function calculateAverageColor(data) {
+function calculateAverageColor (data) {
   let r = 0
   let b = 0
   let g = 0
@@ -54,6 +56,16 @@ function calculateAverageColor(data) {
   return [r, g, b]
 }
 
-function calculateGrid(imageWidth, imageHeight) {
-  return [imageWidth / TILE_WIDTH, imageHeight / TILE_HEIGHT]
+function calculateGrid (imageWidth, imageHeight) {
+  return {
+    gridWidth: Math.ceil(imageWidth / TILE_WIDTH),
+    gridHeight: Math.ceil(imageHeight / TILE_HEIGHT)
+  }
+}
+
+function generateRow (data) {
+  let rgbArray = calculateAverageColor(data)
+  const hex = convertToHex(...rgbArray)
+  let block = createColorBlock(hex)
+  document.body.appendChild(block)
 }
