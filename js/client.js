@@ -7,24 +7,31 @@ document.addEventListener('change', (e) => {
     context.drawImage(image, 0, 0)
     let { gridWidth, gridHeight} = calculateGrid(width, height)
     console.log(gridWidth, gridHeight)
-    for(let y = 0; y < gridHeight; y++) {
-      let div = document.createElement('div')
-      div.style.display = 'none'
-      let rowLoading = []
-      for(let x = 0; x < gridWidth; x++) {
-        let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
-        let block = generateBlock(data)
-        rowLoading.push(imageLoadedPromise(block))
-        div.appendChild(block)
-      }
-      document.body.appendChild(div)
-      Promise.all(rowLoading).then(() => {
-        console.log('done')
-        div.style.display = ''
-      })
-    }
+    generateMosaic(context, gridWidth, gridHeight)
   })
 })
+
+function generateMosaic(context, gridWidth, gridHeight) {
+  let rowsLoading = []
+  for(let y = 0; y < gridHeight; y++) {
+    let div = document.createElement('div')
+    div.style.display = 'none'
+    let images = []
+    for(let x = 0; x < gridWidth; x++) {
+      let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
+      let block = generateBlock(data)
+      images.push(imageLoadedPromise(block))
+      div.appendChild(block)
+    }
+    document.body.appendChild(div)
+    rowsLoading.push(Promise.all(images).then(rowLoaded.bind(div, y)))
+  }
+}
+
+function rowLoaded (y) {
+  console.log(y)
+  this.style.display = ''
+}
 
 function imageLoadedPromise (image) {
   return new Promise((resolve, reject) => {
