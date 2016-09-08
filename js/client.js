@@ -1,14 +1,14 @@
 class MosaicApp {
-  constructor() {
+  constructor () {
     document.querySelector('#file').addEventListener('change', this.fileChange.bind(this))
     this.imageEl = document.querySelector('#image')
     this.mosaicEl = document.querySelector('#mosaic')
   }
-  clearApp() {
+  clearApp () {
     this.imageEl.innerHTML = ''
     this.mosaicEl.innerHTML = ''
   }
-  fileChange(e) {
+  fileChange (e) {
     this.clearApp()
     let file = e.target.files[0]
     let image = new ImageLoader(file)
@@ -22,7 +22,7 @@ class MosaicApp {
       this.generate(context, gridWidth, gridHeight)
     })
   }
-  generate(context, gridWidth, gridHeight) {
+  generate (context, gridWidth, gridHeight) {
     let rowsLoading = []
     for(let y = 0; y < gridHeight; y++) {
       let div = this.createRow()
@@ -42,14 +42,14 @@ class MosaicApp {
     this.sequentialLoad(rowsLoading)
     // run the promise one at a time left to right
   }
-  createRow() {
+  createRow () {
     let div = document.createElement('div')
     div.className = 'row'
     div.style.display = 'none'
     this.mosaicEl.appendChild(div)
     return div
   }
-  sequentialLoad(rows) {
+  sequentialLoad (rows) {
     rows.reduce((previous, currentValue) => {
       // wait for the previous to finish
       return previous.then(() => {
