@@ -1,7 +1,6 @@
 document.addEventListener('change', (e) => {
   let file = e.target.files[0]
-  let image = document.createElement('img')
-  image.onload = () => {
+  getImageDetails(file, (image) => {
     let { width, height } = image
     document.body.appendChild(image)
     let context = createCanvasContext(width, height)
@@ -17,13 +16,20 @@ document.addEventListener('change', (e) => {
       }
       document.body.appendChild(div)
     }
-  }
+  })
+})
+
+function getImageDetails (file, callback) {
+  let image = document.createElement('img')
+  image.onload = function (){
+    return callback.bind(this, image)
+  }();
   let reader = new FileReader()
   reader.onload = () => {
     image.src = reader.result
   }
   reader.readAsDataURL(file)
-})
+}
 
 function createCanvasContext (width, height) {
   let canvas = document.createElement('canvas')
