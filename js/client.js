@@ -14,11 +14,7 @@ document.addEventListener('change', (e) => {
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
         let block = generateBlock(data)
-        rowLoading.push(new Promise((resolve, reject) => {
-          block.onload = () => {
-            resolve()
-          }
-        }))
+        rowLoading.push(imageLoadedPromise(block))
         div.appendChild(block)
       }
       document.body.appendChild(div)
@@ -29,6 +25,14 @@ document.addEventListener('change', (e) => {
     }
   })
 })
+
+function imageLoadedPromise (image) {
+  return new Promise((resolve, reject) => {
+    image.onload = () => {
+      resolve()
+    }
+  })
+}
 
 function getImageDetails (file, callback) {
   let image = document.createElement('img')
