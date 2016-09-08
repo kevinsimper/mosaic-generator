@@ -28,14 +28,16 @@ class MosaicApp {
       let div = document.createElement('div')
       div.className = 'row'
       div.style.display = 'none'
+      this.mosaicEl.appendChild(div)
       let images = []
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
-        let block = this.generateBlock(data)
-        images.push(this.makeImageLoadedPromise(block))
-        div.appendChild(block)
+        let blockPromise = this.generateBlock(data).then((block) => {
+          div.appendChild(block)
+          return this.makeImageLoadedPromise(block)
+        })
+        images.push(blockPromise)
       }
-      this.mosaicEl.appendChild(div)
       rowsLoading.push(Promise.all(images).then(function () {
         return [div, y]
       }))
@@ -72,9 +74,12 @@ class MosaicApp {
     }
   }
   generateBlock (data) {
-    let rgbArray = calculateAverageColor(data)
-    const hex = convertToHex(...rgbArray)
-    return createColorBlock(hex)
+    // let rgbArray = worker.postMessage([1, data])
+    return new Promise((resolve, reject) => {
+      let rgbArray = calculateAverageColor(data)
+      const hex = convertToHex(...rgbArray)
+      resolve(createColorBlock(hex))
+    })
   }
 
 }
