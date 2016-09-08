@@ -1,13 +1,20 @@
 class MosaicApp {
   constructor() {
     document.querySelector('#file').addEventListener('change', this.fileChange.bind(this))
+    this.imageEl = document.querySelector('#image')
+    this.mosaicEl = document.querySelector('#mosaic')
+  }
+  clearApp() {
+    this.imageEl.innerHTML = ''
+    this.mosaicEl.innerHTML = ''
   }
   fileChange(e) {
+    this.clearApp()
     let file = e.target.files[0]
     let image = new ImageLoader(file)
     image.getDetails(file, (image) => {
       let { width, height } = image
-      document.querySelector('#image').appendChild(image)
+      this.imageEl.appendChild(image)
       let context = createCanvasContext(width, height)
       context.drawImage(image, 0, 0)
       let { gridWidth, gridHeight} = this.calculateGrid(width, height)
@@ -28,7 +35,7 @@ class MosaicApp {
         images.push(this.makeImageLoadedPromise(block))
         div.appendChild(block)
       }
-      document.querySelector('#mosaic').appendChild(div)
+      this.mosaicEl.appendChild(div)
       rowsLoading.push(Promise.all(images).then(function () {
         return [div, y]
       }))
