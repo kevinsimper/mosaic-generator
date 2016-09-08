@@ -12,10 +12,13 @@ document.addEventListener('change', (e) => {
     let { gridWidth, gridHeight} = calculateGrid(width, height)
     console.log(gridWidth, gridHeight)
     for(let y = 0; y < gridHeight; y++) {
+      let div = document.createElement('div')
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
-        generateRow(data)
+        let block = generateRow(data)
+        div.appendChild(block)
       }
+      document.body.appendChild(div)
     }
   }
   let reader = new FileReader()
@@ -66,6 +69,5 @@ function calculateGrid (imageWidth, imageHeight) {
 function generateRow (data) {
   let rgbArray = calculateAverageColor(data)
   const hex = convertToHex(...rgbArray)
-  let block = createColorBlock(hex)
-  document.body.appendChild(block)
+  return createColorBlock(hex)
 }
