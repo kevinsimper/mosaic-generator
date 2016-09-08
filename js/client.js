@@ -25,7 +25,9 @@ document.addEventListener('change', (e) => {
     g = Math.floor(g / pixels)
     b = Math.floor(b / pixels)
     console.log(r, g, b)
-    console.log(convertToHex(r,g,b))
+    const hex = convertToHex(r,g,b)
+    let block = createColorBlock(hex)
+    document.body.appendChild(block)
   }
   let reader = new FileReader()
   reader.onload = () => {
@@ -38,5 +40,10 @@ function convertToHex (r, g, a) {
   const _r = ('0' + r.toString(16)).slice(-2)
   const _g = ('0' + g.toString(16)).slice(-2)
   const _a = ('0' + a.toString(16)).slice(-2)
-  return '#' + _r + _g + _a
+  return _r + _g + _a
+}
+function createColorBlock (hex) {
+  let block = document.createElement('img')
+  block.src = '/color/' + hex
+  return block
 }
