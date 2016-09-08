@@ -82,10 +82,14 @@ class MosaicApp {
     return new Promise((resolve, reject) => {
       let rgbArray = calculateAverageColor(data)
       const hex = convertToHex(...rgbArray)
-      resolve(createColorBlock(hex))
+      resolve(this.createColorBlock(hex))
     })
   }
-
+  createColorBlock (hex) {
+    let block = document.createElement('img')
+    block.src = '/color/' + hex
+    return block
+  }
 }
 new MosaicApp()
 
@@ -118,12 +122,6 @@ function convertToHex (r, g, b) {
   const _g = ('0' + g.toString(16)).slice(-2)
   const _b = ('0' + b.toString(16)).slice(-2)
   return _r + _g + _b
-}
-
-function createColorBlock (hex) {
-  let block = document.createElement('img')
-  block.src = '/color/' + hex
-  return block
 }
 
 function calculateAverageColor (data) {
