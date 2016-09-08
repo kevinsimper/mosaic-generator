@@ -25,10 +25,7 @@ class MosaicApp {
   generate(context, gridWidth, gridHeight) {
     let rowsLoading = []
     for(let y = 0; y < gridHeight; y++) {
-      let div = document.createElement('div')
-      div.className = 'row'
-      div.style.display = 'none'
-      this.mosaicEl.appendChild(div)
+      let div = this.createRow()
       let images = []
       for(let x = 0; x < gridWidth; x++) {
         let data = context.getImageData(x * TILE_WIDTH, y * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT).data
@@ -44,6 +41,13 @@ class MosaicApp {
     }
     this.sequentialLoad(rowsLoading)
     // run the promise one at a time left to right
+  }
+  createRow() {
+    let div = document.createElement('div')
+    div.className = 'row'
+    div.style.display = 'none'
+    this.mosaicEl.appendChild(div)
+    return div
   }
   sequentialLoad(rows) {
     rows.reduce((previous, currentValue) => {
